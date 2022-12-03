@@ -24,4 +24,8 @@ A Todo list app with location reminders that remind the user to do something whe
 * [FirebaseUI Authentication](https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md) - FirebaseUI provides a drop-in auth solution that handles the UI flows for signing
 * [JobIntentService](https://developer.android.com/reference/androidx/core/app/JobIntentService) - Run background service from the background application, Compatible with >= Android O.
 
-## License
+## Tested with 
+
+* [Espresso](https://developer.android.com/training/testing/espresso) - Use Espresso to write concise, beautiful, and reliable Android UI tests.
+* [Mockito](https://site.mockito.org/) - Tasty mocking framework for unit tests
+* [Hamcrest](https://hamcrest.org/JavaHamcrest/tutorial) - Hamcrest is a framework for writing matcher objects allowing ‘match’ rules to be defined declaratively.
