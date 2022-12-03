@@ -26,7 +26,6 @@ import org.junit.runner.RunWith
 @MediumTest
 class RemindersLocalRepositoryTest {
 
-//    TODO: Add testing implementation to the RemindersLocalRepository.kt
 
     private lateinit var repo: RemindersLocalRepository
     private lateinit var database: RemindersDatabase

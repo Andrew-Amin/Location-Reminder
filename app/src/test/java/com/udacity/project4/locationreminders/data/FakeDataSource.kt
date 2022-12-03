@@ -7,9 +7,6 @@ import com.udacity.project4.locationreminders.data.dto.Result
 class FakeDataSource() : ReminderDataSource {
 
 
-
-    //    TODO: Create a fake data source to act as a double to the real data source
-
     val fakeDb: LinkedHashMap<String ,ReminderDTO> = LinkedHashMap()
 
     private var shouldReturnError = false

@@ -100,31 +100,37 @@ class RemindersActivityTest :
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
-    //    TODO: add End to End testing to the app
     @Test
-    fun addNewReminder(){
-        // Start up RemindersActivity screen.
+    fun addNewReminder_withValidData(){
+        // given - Start up RemindersActivity screen.
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
+        // click on the add reminder to navigate to add reminder screen
         onView(withId(R.id.addReminderFAB)).perform(click())
 
+        // set reminder title and description
         onView(withId(R.id.reminderTitle)).perform(
          replaceText("testTitle1")
         )
         onView(withId(R.id.reminderDescription)).perform(
          replaceText("testDescription1")
         )
+
+        // click on the selectLocation textView to navigate to select location screen
         onView(withId(R.id.selectLocation)).perform(click())
 
+        // select a random location
         onView(withId(R.id.map_fragment)).perform(click())
 
+        // clinic the save button
         onView(withId(R.id.saveLocation_btn)).perform(click())
 
+        // on the saveReminder Screen click on the save button
         onView(withId(R.id.saveReminder)).perform(click())
 
-        //then - a recycleView entry should be added with the recently saved reminder
 
+        //then - a recycleView entry should be added with the recently saved reminder
         onView(withId(R.id.reminderssRecyclerView)).check(
             ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("testTitle1")))
         )
@@ -137,6 +143,43 @@ class RemindersActivityTest :
         onView(withId(R.id.location)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         onView(withId(R.id.description)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         onView(withId(R.id.description)).check(ViewAssertions.matches(ViewMatchers.withText("testDescription1")))
+        activityScenario.close()
+    }
+
+    @Test
+    fun addNewReminder_withInvalidData_showSnackBar(){
+        // given - Start up RemindersActivity screen.
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        // click on the add reminder to navigate to add reminder screen
+        onView(withId(R.id.addReminderFAB)).perform(click())
+
+        // set reminder title and description
+
+        onView(withId(R.id.reminderDescription)).perform(
+            replaceText("testDescription1")
+        )
+
+        // click on the selectLocation textView to navigate to select location screen
+        onView(withId(R.id.selectLocation)).perform(click())
+
+        // select a random location
+        onView(withId(R.id.map_fragment)).perform(click())
+
+        // clinic the save button
+        onView(withId(R.id.saveLocation_btn)).perform(click())
+
+        // on the saveReminder Screen click on the save button
+        onView(withId(R.id.saveReminder)).perform(click())
+
+
+        //then - the snackBar should be displayed with err_enter_title string
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(ViewAssertions.matches(ViewMatchers.withText(R.string.err_enter_title)))
         activityScenario.close()
     }
 

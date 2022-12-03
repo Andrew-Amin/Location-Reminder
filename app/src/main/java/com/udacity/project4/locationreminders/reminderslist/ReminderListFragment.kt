@@ -98,7 +98,6 @@ class ReminderListFragment : BaseFragment() {
                 AuthUI.getInstance().signOut(requireContext())
                 //clear the saved todos
                 _viewModel.clearTodosHistory()
-//                TODO: add the logout implementation
             }
         }
         return super.onOptionsItemSelected(item)

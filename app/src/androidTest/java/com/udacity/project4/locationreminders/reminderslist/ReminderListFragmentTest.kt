@@ -64,7 +64,6 @@ class ReminderListFragmentTest {
         viewModel = RemindersListViewModel(getApplicationContext(), repo)
     }
 
-    //    TODO: test the navigation of the fragments.
     @Test
     fun addReminderFAB_navigateToAddReminder() {
         //given - on ReminderActivity
@@ -82,11 +81,10 @@ class ReminderListFragmentTest {
         )
     }
 
-    //    TODO: test the displayed data on the UI.
 
     @Test
     fun isListViewVisible_onFragmentLaunch() {
-        // GIVEN - On the home screen
+        // GIVEN - On ReminderListFragment
         launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
         onView(withId(R.id.reminderssRecyclerView)).check(
             matches(isDisplayed())
@@ -142,8 +140,5 @@ class ReminderListFragmentTest {
         onView(withId(R.id.noDataTextView))
             .check(matches(isDisplayed()))
     }
-
-    //    TODO: add testing for the error messages.
-
 
 }

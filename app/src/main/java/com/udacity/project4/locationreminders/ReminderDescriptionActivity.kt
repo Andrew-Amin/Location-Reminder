@@ -47,7 +47,6 @@ class ReminderDescriptionActivity : AppCompatActivity(), OnMapReadyCallback {
         reminderDataItem = intent.extras?.get(EXTRA_ReminderDataItem) as ReminderDataItem
         binding.reminderDataItem = reminderDataItem
 
-//        TODO: Add the implementation of the reminder details
         setupMap()
     }
 

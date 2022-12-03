@@ -68,17 +68,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
 
-//        TODO: add the map setup implementation
+
         setupMap()
         hasMarker = _viewModel.latitude.value != null && _viewModel.longitude.value != null
-//        TODO: zoom to the user location after taking his permission
-
-//        TODO: add style to the map
-//        TODO: put a marker to location that the user selected
-
-
-//        TODO: call this function after the user confirms on the selected location
-
 
         return binding.root
     }
@@ -95,7 +87,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        // TODO: Change the map type based on the user's selection.
         R.id.normal_map -> {
             googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
             true
@@ -179,9 +170,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             return
         }
         _viewModel.navigationCommand.value = NavigationCommand.Back
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
+
     }
 
     private fun setMapClick(map: GoogleMap) {
