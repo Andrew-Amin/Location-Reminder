@@ -17,7 +17,8 @@ class FakeDataSource() : ReminderDataSource {
 
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
-        return if (shouldReturnError) Result.Error("error") else Result.Success(fakeDb.values.toList())
+        return if (shouldReturnError) Result.Error("error")
+        else Result.Success(fakeDb.values.toList())
     }
 
     override suspend fun saveReminder(reminder: ReminderDTO) {
@@ -27,7 +28,7 @@ class FakeDataSource() : ReminderDataSource {
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
         val selectedReminder = fakeDb[id]
 
-        return if (selectedReminder == null)
+        return if (selectedReminder == null || shouldReturnError)
             Result.Error("Reminder not found!")
         else
             Result.Success(selectedReminder)

@@ -9,9 +9,7 @@ import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
@@ -79,16 +77,16 @@ class RemindersListViewModelTest {
         mainCoroutineRule.pauseDispatcher()
         remindersListViewModel.loadReminders()
 
-        MatcherAssert.assertThat(
+        assertThat(
             remindersListViewModel.showLoading.getOrAwaitValue(),
-            CoreMatchers.`is`(true)
+            `is`(true)
         )
 
         //then showLoading = false
         mainCoroutineRule.resumeDispatcher()
-        MatcherAssert.assertThat(
+        assertThat(
             remindersListViewModel.showLoading.getOrAwaitValue(),
-            CoreMatchers.`is`(false)
+            `is`(false)
         )
     }
 
@@ -121,5 +119,20 @@ class RemindersListViewModelTest {
         assertThat(firstReminder.location, `is`("testLocation1"))
         assertThat(firstReminder.latitude, `is`(0.0))
         assertThat(firstReminder.longitude, `is`(0.0))
+    }
+
+    @Test
+    fun loadReminders_showError() {
+        //given an empty dataSource & empty remindersList
+        val fakeDataSource = FakeDataSource()
+        fakeDataSource.setReturnError(true)
+
+        remindersListViewModel = RemindersListViewModel(getApplicationContext(), fakeDataSource)
+
+        //when call loadReminders()
+        remindersListViewModel.loadReminders()
+
+        //then the  remindersListViewModel.remindersList is not empty and has the same data
+        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("error"))
     }
 }

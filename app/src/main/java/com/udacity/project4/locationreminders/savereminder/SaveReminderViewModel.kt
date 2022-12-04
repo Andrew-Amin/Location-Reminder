@@ -5,6 +5,7 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Intent
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.Geofence
@@ -18,6 +19,7 @@ import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import com.udacity.project4.utils.GeofencingConstants
 import kotlinx.coroutines.launch
 
 class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSource) :
@@ -87,7 +89,7 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         // A PendingIntent for the Broadcast Receiver that handles geofence transitions.
         val geofencePendingIntent: PendingIntent by lazy {
             val intent = Intent(app.applicationContext, GeofenceBroadcastReceiver::class.java)
-            intent.action = SaveReminderFragment.ACTION_GEOFENCE_EVENT
+            intent.action = GeofencingConstants.ACTION_GEOFENCE_EVENT
             // Use FLAG_UPDATE_CURRENT so that you get the same pending intent back when calling
             // addGeofences() and removeGeofences().
             PendingIntent.getBroadcast(
@@ -106,11 +108,11 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
             .setCircularRegion(
                 item.latitude!!,
                 item.longitude!!,
-                SaveReminderFragment.GeofencingConstants.GEOFENCE_RADIUS_IN_METERS
+                GeofencingConstants.GEOFENCE_RADIUS_IN_METERS
             )
             // Set the expiration duration of the geofence. This geofence gets
             // automatically removed after this period of time.
-            .setExpirationDuration(SaveReminderFragment.GeofencingConstants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+            .setExpirationDuration(Geofence.NEVER_EXPIRE)
             // Set the transition types of interest. Alerts are only generated for these
             // transition. We track entry and exit transitions in this sample.
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
@@ -127,21 +129,14 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
             .addGeofence(geofence)
             .build()
 
-        // First, remove any existing geofences that use our pending intent
-        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
-            // Regardless of success/failure of the removal, add the new geofence
-            addOnCompleteListener {
-                // Add the new geofence request with the new geofence
-                geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
-                    addOnSuccessListener {
+        // Add the new geofence request with the new geofence
+        geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
+            addOnSuccessListener {
 
-                        Log.e("Add Geofence", geofence.requestId)
-                    }
-                    addOnFailureListener {
-                        showErrorMessage.value = app.getString(R.string.geofences_not_added)
-
-                    }
-                }
+                Log.e("Add Geofence", geofence.requestId)
+            }
+            addOnFailureListener {
+                showErrorMessage.value = app.getString(R.string.geofences_not_added)
             }
         }
     }

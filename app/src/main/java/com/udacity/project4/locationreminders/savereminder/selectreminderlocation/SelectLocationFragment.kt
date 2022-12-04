@@ -10,7 +10,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -26,6 +25,7 @@ import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.utils.LOCATION_PERMISSION_REQUEST_CODE
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
 import java.util.*
@@ -35,13 +35,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     companion object {
         private const val TAG = "SelectLocationFragment"
-
-        /**
-         * Request code for location permission request.
-         *
-         * @see .onRequestPermissionsResult
-         */
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
     //Use Koin to get the view model of the SaveReminder
@@ -75,11 +68,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (!hasMarker)
-            _viewModel.showToast.value = getString(R.string.select_poi)
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        if (!hasMarker)
+//            _viewModel.showToast.value = getString(R.string.select_poi)
+//    }
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -284,22 +277,19 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private fun enableMyLocation() {
         if (isFineLocationPermissionGranted() && isCoarseLocationPermissionGranted()) {
             googleMap.isMyLocationEnabled = true
-
-
         } else if (!isFineLocationPermissionGranted()) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+            requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         } else if (!isCoarseLocationPermissionGranted()) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+            requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
+        }else{
+            _viewModel.showErrorMessage.value = getString(R.string.permission_denied_explanation)
         }
     }
-
 
 }

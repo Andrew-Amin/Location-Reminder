@@ -32,6 +32,8 @@ class AuthenticationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_authentication)
 
         currentUser = FirebaseAuth.getInstance().currentUser
+        if(currentUser!=null)
+            goToRemindersActivity()
 
     }
 
@@ -47,7 +49,7 @@ class AuthenticationActivity : AppCompatActivity() {
 
     private fun goToRemindersActivity() {
         startActivity(Intent(this, RemindersActivity::class.java))
-//        finish()
+        finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

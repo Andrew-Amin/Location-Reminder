@@ -7,11 +7,12 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
@@ -22,6 +23,7 @@ import com.udacity.project4.util.DataBindingIdlingResource
 import com.udacity.project4.util.monitorActivity
 import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -33,6 +35,7 @@ import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.koin.test.get
 
+
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 //END TO END test to black box test the app
@@ -41,6 +44,7 @@ class RemindersActivityTest :
 
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
+
     // An idling resource that waits for Data Binding to have no pending bindings.
     private val dataBindingIdlingResource = DataBindingIdlingResource()
 
@@ -100,8 +104,9 @@ class RemindersActivityTest :
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
+
     @Test
-    fun addNewReminder_withValidData(){
+    fun addNewReminder_withValidData_addReminderToListAndShowSuccessToast() {
         // given - Start up RemindersActivity screen.
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
@@ -111,10 +116,10 @@ class RemindersActivityTest :
 
         // set reminder title and description
         onView(withId(R.id.reminderTitle)).perform(
-         replaceText("testTitle1")
+            replaceText("testTitle1")
         )
         onView(withId(R.id.reminderDescription)).perform(
-         replaceText("testDescription1")
+            replaceText("testDescription1")
         )
 
         // click on the selectLocation textView to navigate to select location screen
@@ -132,22 +137,29 @@ class RemindersActivityTest :
 
         //then - a recycleView entry should be added with the recently saved reminder
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("testTitle1")))
+            matches(hasDescendant(withText("testTitle1")))
         )
 
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withText("testDescription1")))
+            matches(hasDescendant(withText("testDescription1")))
         )
-        onView(withId(R.id.title)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(withId(R.id.title)).check(ViewAssertions.matches(ViewMatchers.withText("testTitle1")))
-        onView(withId(R.id.location)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(withId(R.id.description)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(withId(R.id.description)).check(ViewAssertions.matches(ViewMatchers.withText("testDescription1")))
+        onView(withId(R.id.title)).check(matches(isDisplayed()))
+        onView(withId(R.id.title)).check(matches(withText("testTitle1")))
+        onView(withId(R.id.location)).check(matches(isDisplayed()))
+        onView(withId(R.id.description)).check(matches(isDisplayed()))
+        onView(withId(R.id.description)).check(matches(withText("testDescription1")))
+
+        // that reminder saved toast message should be shown to the user
+        onView(withText(R.string.reminder_saved)).inRoot(
+            withDecorView(not(getActivity(getApplicationContext())?.window?.decorView))
+        ).check(
+            matches(isDisplayed())
+        )
         activityScenario.close()
     }
 
     @Test
-    fun addNewReminder_withInvalidData_showSnackBar(){
+    fun addNewReminder_withInvalidData_showSnackBar() {
         // given - Start up RemindersActivity screen.
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
@@ -176,14 +188,12 @@ class RemindersActivityTest :
 
         //then - the snackBar should be displayed with err_enter_title string
         onView(withId(com.google.android.material.R.id.snackbar_text))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+            .check(matches(isDisplayed()))
 
         onView(withId(com.google.android.material.R.id.snackbar_text))
-            .check(ViewAssertions.matches(ViewMatchers.withText(R.string.err_enter_title)))
+            .check(matches(withText(R.string.err_enter_title)))
         activityScenario.close()
     }
-
-
 
 
 }
