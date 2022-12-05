@@ -32,7 +32,6 @@ import org.mockito.Mockito
 @MediumTest
 class SaveReminderFragmentTest : AutoCloseKoinTest(){
 
-    private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
 
     @Before
@@ -40,12 +39,7 @@ class SaveReminderFragmentTest : AutoCloseKoinTest(){
         stopKoin()//stop the original app koin
         appContext = ApplicationProvider.getApplicationContext()
         val myModule = module {
-            viewModel {
-                RemindersListViewModel(
-                    appContext,
-                    get() as ReminderDataSource
-                )
-            }
+
             single {
                 SaveReminderViewModel(
                     appContext,
@@ -58,13 +52,6 @@ class SaveReminderFragmentTest : AutoCloseKoinTest(){
         //declare a new koin module
         startKoin {
             modules(listOf(myModule))
-        }
-        //Get our real repository
-        repository = get()
-
-        //clear the data to start fresh
-        runBlocking {
-            repository.deleteAllReminders()
         }
     }
     @Test

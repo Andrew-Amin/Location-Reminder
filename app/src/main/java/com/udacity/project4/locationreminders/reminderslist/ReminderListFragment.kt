@@ -69,7 +69,7 @@ class ReminderListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
         setupRecyclerView()
-        enableMyLocation()
+//        enableMyLocation()
         binding.addReminderFAB.setOnClickListener {
             navigateToAddReminder()
         }
@@ -120,39 +120,6 @@ class ReminderListFragment : BaseFragment() {
 
     private fun goToAuthenticationActivity() {
         startActivity(Intent(requireContext(), AuthenticationActivity::class.java))
-    }
-
-    private fun isFineLocationPermissionGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun isCoarseLocationPermissionGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun enableMyLocation() {
-        if (isFineLocationPermissionGranted() && isCoarseLocationPermissionGranted())
-            return
-        if (!isFineLocationPermissionGranted()) {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        } else if (!isCoarseLocationPermissionGranted()) {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        } else {
-            _viewModel.showErrorMessage.value = getString(R.string.permission_denied_explanation)
-        }
     }
 
 }

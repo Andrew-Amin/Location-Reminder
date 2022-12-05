@@ -45,10 +45,10 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
 
 
     lateinit var viewModel: RemindersListViewModel
-    private lateinit var repo: RemindersLocalRepository
+//    private lateinit var repo: RemindersLocalRepository
     private lateinit var remindersDao: RemindersDao
 
-    private lateinit var repository: ReminderDataSource
+    private lateinit var repo: ReminderDataSource
     private lateinit var appContext: Application
 
     @get:Rule
@@ -68,12 +68,6 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
                     get() as ReminderDataSource
                 )
             }
-            single {
-                SaveReminderViewModel(
-                    appContext,
-                    get() as ReminderDataSource
-                )
-            }
             single { RemindersLocalRepository(get()) as ReminderDataSource }
             single { LocalDB.createRemindersDao(appContext) }
         }
@@ -82,11 +76,11 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
             modules(listOf(myModule))
         }
         //Get our real repository
-        repository = get()
+        repo = get()
 
         //clear the data to start fresh
         runBlocking {
-            repository.deleteAllReminders()
+            repo.deleteAllReminders()
         }
     }
 
